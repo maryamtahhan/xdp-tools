@@ -50,6 +50,26 @@ DEFINE_XSK_RING(xsk_ring_cons);
 struct xsk_umem;
 struct xsk_socket;
 
+#define BIT(nr) (1UL << (nr))
+
+enum xsk_desc_flags {
+    XSK_DESC_HAS_HINTS_COMMON = 1,/* xdp_hints_common */
+    XSK_DESC_HAS_HINTS        = 2,/* xdp_hints */
+};
+
+#define XSK_DESC_HINTS_ORIGIN_MASK     (XSK_DESC_HAS_HINTS_COMMON |    \
+                                        XSK_DESC_HAS_HINTS)
+
+XDP_ALWAYS_INLINE bool xsk_desc_has_hints(const struct xdp_desc *d)
+{
+       return !!(d->options & XSK_DESC_HINTS_ORIGIN_MASK);
+}
+
+XDP_ALWAYS_INLINE bool xsk_desc_has_hints_common(const struct xdp_desc *d)
+{
+       return !!(d->options & XSK_DESC_HAS_HINTS_COMMON);
+}
+
 XDP_ALWAYS_INLINE __u64 *xsk_ring_prod__fill_addr(struct xsk_ring_prod *fill,
 					      __u32 idx)
 {
